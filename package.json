@@ -1,0 +1,95 @@
+{
+  "name": "beland-social-client",
+  "version": "1.0.0",
+  "description": "A client to handle messaging and friendship between Beland users",
+  "main": "dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig-build.json",
+    "prewatch": "rm -rf dist",
+    "watch": "tsc --watch --project tsconfig-build.json",
+    "test": "nyc mocha -r ts-node/register -r tsconfig-paths/register --exit \"test/**/*.spec.ts\"",
+    "prepare-performance-test": "node -r ts-node/register -r tsconfig-paths/register test/performance/set-up-performance-test.ts",
+    "semantic-release": "semantic-release",
+    "commit-msg": "validate-commit-msg"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belandproject/matrix-client.git"
+  },
+  "keywords": [
+    "belandproject"
+  ],
+  "author": "Beland",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/belandproject/matrix-client/issues"
+  },
+  "homepage": "https://github.com/belandproject/matrix-client#readme",
+  "dependencies": {
+    "@types/matrix-js-sdk": "^5.1.2",
+    "@types/node": "^13.11.1",
+    "beland-crypto": "1.0.1",
+    "matrix-js-sdk": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.8",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/cli-progress": "^3.4.2",
+    "@types/dockerode": "^2.5.26",
+    "@types/fs-extra": "^8.1.0",
+    "@types/js-yaml": "^3.12.3",
+    "@types/mocha": "^5.2.7",
+    "@types/ms": "^0.7.31",
+    "@types/sinon": "^9.0.0",
+    "@types/sinon-chai": "^3.2.4",
+    "@types/tiny-async-pool": "^1.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cli-progress": "^3.8.0",
+    "dcl-tslint-config-standard": "^1.0.1",
+    "dockerode": "^3.2.0",
+    "eth-crypto": "^1.5.2",
+    "fs-extra": "^9.0.0",
+    "husky": "^1.0.1",
+    "js-yaml": "^3.13.1",
+    "mocha": "^5.2.0",
+    "ms": "^2.1.2",
+    "nested-property": "^2.0.0",
+    "nyc": "^14.1.1",
+    "prettier": "^1.10.2",
+    "semantic-release": "^17.2.3",
+    "sinon": "^9.0.2",
+    "sinon-chai": "^3.5.0",
+    "testcontainers": "^2.7.0",
+    "tiny-async-pool": "^1.1.0",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.9.0",
+    "tslint": "^5.7.0",
+    "tslint-config-prettier": "^1.10.0",
+    "tslint-language-service": "^0.9.9",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^3.7.5",
+    "validate-commit-msg": "^2.14.0"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "singleQuote": true,
+    "semi": false
+  }
+}
