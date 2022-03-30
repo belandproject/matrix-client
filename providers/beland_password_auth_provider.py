@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-from typing import Awaitable, Callable, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import hashlib
 import hmac
@@ -8,23 +8,21 @@ import logging
 
 from twisted.internet import defer
 import synapse
-from synapse import module_api
 
-LOGIN_TYPE = 'm.login.beland'
+SUPPORTED_LOGIN_TYPE: str = "m.login.beland"
+SUPPORTED_LOGIN_FIELDS: Tuple[str, ...] = ('timestamp', 'auth_chain')
+
 logger = logging.getLogger(__name__)
 
 class BelandPasswordAuthProvider:
-    def __init__(self, config: dict, api: module_api):
+    def __init__(self, config: dict, account_handler):
         self.enabled = bool(config['enabled']) if 'enabled' in config else False
         self.trusted_servers = BelandPasswordAuthProvider.sanitize_trusted_servers(config['trusted_servers'])
         logger.info('Will use the following trusted servers \'%s\'', ', '.join(self.trusted_servers))
-        self.api = api
+        self.api = account_handler
 
-    def get_supported_login_types(self):
-        if self.enabled:
-            return { LOGIN_TYPE: ('timestamp', 'auth_chain') }
-        else:
-            return { }
+    def get_supported_login_types(self) -> Dict[str, Tuple[str, ...]]:
+        return {SUPPORTED_LOGIN_TYPE: SUPPORTED_LOGIN_FIELDS}
 
     @defer.inlineCallbacks
     def check_auth(self, username, login_type, login_dict):
@@ -33,7 +31,6 @@ class BelandPasswordAuthProvider:
 
         # Make sure that provider is enabled
         if not self.enabled:
-            logger.debug("Username '%s' could not log in, since the provider is disabled", username)
             return None
 
         # Make sure that the login type is correct
