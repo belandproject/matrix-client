@@ -31,7 +31,7 @@ export class SocialClient implements SocialAPI {
         const waitForInitialSync = new Promise((resolve, reject) => {
             matrixClient.once('sync', async (state) => {
                 if (state === 'PREPARED') {
-                    resolve()
+                    resolve(null)
                 } else {
                     reject()
                 }

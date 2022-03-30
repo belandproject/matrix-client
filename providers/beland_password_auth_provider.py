@@ -1,27 +1,24 @@
-import requests
+# -*- coding: utf-8 -*-
+#
+from typing import Awaitable, Callable, Optional, Tuple
+
+import hashlib
+import hmac
 import logging
+
 from twisted.internet import defer
-from datetime import timedelta, datetime
+import synapse
+from synapse import module_api
 
 LOGIN_TYPE = 'm.login.beland'
-logger = logging.getLogger('synapse.beland_password_auth_provider')
+logger = logging.getLogger(__name__)
 
 class BelandPasswordAuthProvider:
-    """
-        This PasswordAuthProvider will receive an ethereum address as a username and some extra data (as a signature) to confirm that
-        the user is who they say they are. This data will consist of a timestamp (that needs to be recent enough), and an auth
-        chain that ends up signing the timestamp.
-        The provider will then validate the signature, create the user if necessary, and return the qualified user id.
-        It is important to mention that the username must be only the ethereum address (or localpart in Matrix terms). The domain
-        shouldn't be passed.
-    """
-
-    def __init__(self, config, account_handler):
-        self.enabled = config.get('enabled', True) # Enabled by default
+    def __init__(self, config: dict, api: module_api):
+        self.enabled = bool(config['enabled']) if 'enabled' in config else False
         self.trusted_servers = BelandPasswordAuthProvider.sanitize_trusted_servers(config['trusted_servers'])
         logger.info('Will use the following trusted servers \'%s\'', ', '.join(self.trusted_servers))
-        self.account_handler = account_handler
-
+        self.api = api
 
     def get_supported_login_types(self):
         if self.enabled:
@@ -122,3 +119,4 @@ class BelandPasswordAuthProvider:
 
         return config
 
+   
