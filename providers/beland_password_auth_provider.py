@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 #
+import requests
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import hashlib
 import hmac
 import logging
+from datetime import timedelta, datetime
 
 from twisted.internet import defer
 import synapse
@@ -19,7 +21,7 @@ class BelandPasswordAuthProvider:
         self.enabled = bool(config['enabled']) if 'enabled' in config else False
         self.trusted_servers = BelandPasswordAuthProvider.sanitize_trusted_servers(config['trusted_servers'])
         logger.info('Will use the following trusted servers \'%s\'', ', '.join(self.trusted_servers))
-        self.api = account_handler
+        self.account_handler = account_handler
 
     def get_supported_login_types(self) -> Dict[str, Tuple[str, ...]]:
         return {SUPPORTED_LOGIN_TYPE: SUPPORTED_LOGIN_FIELDS}
@@ -34,7 +36,7 @@ class BelandPasswordAuthProvider:
             return None
 
         # Make sure that the login type is correct
-        if login_type != LOGIN_TYPE:
+        if login_type != SUPPORTED_LOGIN_TYPE:
             logger.debug("Username '%s' could not log in, since login type was incorrect", username)
             return None
 
@@ -87,7 +89,7 @@ class BelandPasswordAuthProvider:
         for server in self.trusted_servers:
             try:
                 url = '{}/crypto/validate-signature'.format(server)
-                r = requests.post(url, json={'authChain': auth_chain, 'timestamp': timestamp}, timeout=5)
+                r = requests.post(url, json={'auth_chain': auth_chain, 'timestamp': timestamp}, timeout=5)
                 r.raise_for_status()
                 result = r.json()
                 if 'valid' in result and 'ownerAddress' in result and result['valid']:
